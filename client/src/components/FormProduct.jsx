@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
+import ReactPaginate from "react-paginate";
 
 const FormProduct = () => {
   const [data, setData] = useState([]);
   const [form, setForm] = useState({});
   const [query, setQuery] = useState("");
+  const [limit, setLimit] = useState([]);
+  const currentPage = useRef();
+  const usersPerPage = 10;
+  const pageCount = Math.ceil(data.length / usersPerPage);
 
   useEffect(() => {
+    currentPage.current = 1;
+    loadData();
+    getPaginatedUsers();
     loadData();
   }, []);
 
@@ -49,7 +57,25 @@ const FormProduct = () => {
       })
       .catch((err) => console.log(err));
   };
+  function handlePageClick(e) {
+    console.log(e);
+    currentPage.current = e.selected + 1;
+    getPaginatedUsers();
+  }
 
+  function getPaginatedUsers() {
+    fetch(
+      `http://localhost:3000/api/product?page=${currentPage.current}&limit=${limit}`,
+      {
+        method: "GET",
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "userData");
+        setData(data);
+      });
+  }
   return (
     <div>
       <div className="p-8 text-xl font-bold text-center text-gray-900 dark:text-white">
@@ -571,6 +597,29 @@ const FormProduct = () => {
               : null}
           </tbody>
         </table>
+      </div>
+      <div className="mt-10">
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel="Next >"
+          onPageChange={handlePageClick}
+          pageCount={pageCount}
+          previousLabel="< Previous"
+          renderOnZeroPageCount={null}
+          marginPagesDisplayed={3}
+          pageRangeDisplayed={6}
+          containerClassName="pagination justify-content-center"
+          pageClassName="page-item"
+          pageLinkClassName="page-link"
+          previousClassName="page-item"
+          previousLinkClassName="page-link"
+          nextClassName="page-item"
+          nextLinkClassName="page-link"
+          activeClassName="active"
+          forcePage={currentPage.current - 1}
+          breakClassName={"page-item"}
+          breakLinkClassName={"page-link"}
+        />
       </div>
     </div>
   );
