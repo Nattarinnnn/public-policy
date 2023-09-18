@@ -8,16 +8,16 @@ import Home from "./components/Home";
 import Footer from "./components/Footer";
 import Team from "./components/Team";
 import FormEditProduct from "./components/FormEditProduct";
-import FormProduct from "./components/formproduct";
+import FormProduct from "./components/Formproduct";
 
 function App() {
   return (
     <div>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<FormProduct />} />
         <Route path="/team" element={<Team />} />
-        <Route path="/eval" element={<FormProduct />} />
+        <Route path="/eval" element={<Home />} />
         <Route path="edit/:id" element={<FormEditProduct />} />
       </Routes>
       <Footer />
